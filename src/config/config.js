@@ -21,6 +21,7 @@ const envVarsSchema = Joi.object()
     AWS_S3_ACCESS_KEY_ID: Joi.string().required(),
     AWS_S3_BUCKET: Joi.string().required(),
     FIREBASE_API_KEY : Joi.string().required(),
+    FIREBASE_SERVICE_SECRET_JSON: Joi.string().required(),
   })
   .unknown();
 
@@ -61,5 +62,6 @@ module.exports = {
   },
   firebase : {
     apiKey : envVars.FIREBASE_API_KEY,
+    serviceAccountKey : envVars.FIREBASE_SERVICE_SECRET_JSON,
   }
 };

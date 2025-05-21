@@ -1,36 +1,120 @@
-# Node-starter-template-v2
+# UGC Backend
 
-1. Config - You can add your all configuation and external settings in this
-    - contains the validation and logic to export the env variables
-    - contains the loggers to handle custom logs, errors or exceptions etc occuring throughout the codebase be it internal or your own logs
+A backend API service built with **Node.js**, **Express**, **MongoDB**, and **Firebase** for managing users, posts, and authentication in a User-Generated Content (UGC) application.
 
-2. Constants - contains the constant variables that could be types, options that are used in different models, validations, controllers etc
+---
 
-3. Controllers - contains the function that takes over the request once its validated & authenticated by the middlewares. This is the place where you ensure all the checks/errorHandling, data manipulation/extraction & prepartion of data which will be required by the services.
+## 🔧 Tech Stack
 
-4. Microservices - contains the 3rd party services for example, notifications, fileUpload, sms etc. 
+- **Node.js** + **Express** – REST API server
+- **MongoDB** + **Mongoose** – Database and ODM
+- **Firebase Admin SDK** – Auth and custom token generation
+- **Joi** – Request validation
+- **Axios** – External API calls (e.g., Google Identity Toolkit)
+- **Postman** – API testing
 
-5. Middlewares - contains the function that are used for validation, authentication, or handling the errors thrown by any service, controller or other functions.
+---
 
-6. Models - Contains the schema of collections and plugins which can be integrated into schema
-  - for example: we have paginate plugin that supports - pagination, filtering, sorting, ordering, location search, population 
+## 📁 Project Structure
 
-7. routes - contains versions of all api(s) routes. In initial setup you will have all routes starting from v1 later on you can upgrade.
+```
+UGCBackend/
+├── src/
+│   ├── config/              # Environment configs
+│   ├── controllers/         # Route controllers
+│   ├── models/              # Mongoose schemas
+│   ├── routes/              # Route definitions
+│   ├── validations/         # Joi validation schemas
+│   ├── utils/               # Helpers (e.g., catchAsync, ApiError)
+├── .env                     # Environment variables
+├── server.js                # App entry point
+```
 
-8. services - contains the function that interacts with Database to do the CRUD operations. Since we are not using Typescript in this templates. It's highly recommended that you handle all your exception and checks in the respective controller before interacting with any service. Services are purely for performing CRUD ops, period.
+---
 
-9. utils - contains the utility functions that you use all across the codebase.
+## ⚙️ Setup Instructions
 
-10. validations - contains the validation schemas for each api. Its again highly recommended that if we are not writing test cases then please maintain validators so that we can avoid unnecessary edge cases or wrong request. First thing that we do is validate the request then move to authentication, period. 
+### 1. Clone the Repository
 
-- app.js - contains  the configuration of your server
+```bash
+git clone https://github.com/Harsh72019/ugc-backend.git
+cd ugc-backend
+```
 
-- index.js - boot up script
+### 2. Install Dependencies
 
-**Before You Start**
-- You have to save the .env file locally with required variables mentioned in config/config.js
-- If you don't use any or specific microservice then please remove their validation & cancel their export from config/config.js, otherwise app won't run.
+```bash
+npm install
+```
 
-_Codebase should be like a graden where everyone can move around easily and peacefully._
+### 3. Environment Variables
 
-**_HAPPY CODING..._**
+Create a `.env` file in the root directory and configure:
+
+```env
+PORT=3000
+MONGO_URI=mongodb://localhost:27017/ugc
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_CLIENT_EMAIL=your-service-account-email
+FIREBASE_PRIVATE_KEY=your-service-account-private-key
+FIREBASE_API_KEY=your-firebase-web-api-key
+NODE_ENV=development
+```
+
+> You can get these from your Firebase service account credentials and project settings.
+
+---
+
+## 🔐 Firebase Custom Token Generation (Dev Only)
+
+A dev-only route is available to generate Firebase ID tokens from UID:
+
+**Route:**
+```
+GET /api/v1/auth/generate-token/:uid
+```
+
+Use the token for further requests requiring Firebase authentication.
+
+---
+
+## 🧪 Postman Setup
+
+Use the included Postman Collection to test API endpoints.
+
+### 🛠️ Auto-setting `firebaseToken` Variable
+
+Use this snippet as a **Tests** script in the token generation request:
+
+```js
+const token = pm.response.json().data.token;
+pm.environment.set("firebaseToken", token);
+```
+
+Then, use `{{firebaseToken}}` in the **Authorization** header or body.
+
+---
+
+## 📌 Routes Overview
+
+### Auth
+
+- `GET /api/v1/auth/generate-token/:uid` – Generates Firebase token (dev only)
+
+### Users
+
+- `PATCH /api/v1/user/:userId` – Update user info
+- `DELETE /api/v1/user/:userId` – Delete a user
+- `PATCH /api/v1/user/preferences` – Update preferences
+
+### Posts
+
+- `POST /api/v1/post` – Create a post
+- `GET /api/v1/post/:id` – Get post by ID
+- `DELETE /api/v1/post/:id` – Delete post
+
+---
+
+## 🧾 License
+
+MIT

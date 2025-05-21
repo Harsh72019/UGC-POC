@@ -2,9 +2,11 @@ const admin = require('firebase-admin');
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 
-const serviceAccount = require('../../firebase-service-secret.json');
 const {authService} = require('../services');
+const config = require('../config/config');
 
+const serviceAccount =  JSON.parse(config.firebase.serviceAccountKey);
+console.log("seriveAccount" , serviceAccount)
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
@@ -38,16 +40,6 @@ const firebaseAuth = (allowUserType = 'All') => async (req, res, next) => {
 
       resolve();
     } catch (err) {
-
-  console.error("🔥 Firebase token exchange error:");
-  console.error("Response data:", err.response?.data);
-  console.error("Request payload:", {
-    token: customToken,
-    returnSecureToken: true,
-  });
-  console.error("API key:", config.firebase.apiKey);
-  // throw new ApiError(500, err.response?.data?.error?.message || 'Token exchange failed');
-
       if (err.code === 'auth/id-token-expired') {
         reject(new ApiError(httpStatus.UNAUTHORIZED, 'Session is expired'));
       }

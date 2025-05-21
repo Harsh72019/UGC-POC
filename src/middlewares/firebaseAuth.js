@@ -38,6 +38,16 @@ const firebaseAuth = (allowUserType = 'All') => async (req, res, next) => {
 
       resolve();
     } catch (err) {
+
+  console.error("🔥 Firebase token exchange error:");
+  console.error("Response data:", err.response?.data);
+  console.error("Request payload:", {
+    token: customToken,
+    returnSecureToken: true,
+  });
+  console.error("API key:", config.firebase.apiKey);
+  // throw new ApiError(500, err.response?.data?.error?.message || 'Token exchange failed');
+
       if (err.code === 'auth/id-token-expired') {
         reject(new ApiError(httpStatus.UNAUTHORIZED, 'Session is expired'));
       }

@@ -62,7 +62,7 @@ const userSchema = new mongoose.Schema(
     }],
     step : {
       type: Number,
-      default: 0,
+      default: 1,
     },
     isOnboardingCompleted: {
       type: Boolean,

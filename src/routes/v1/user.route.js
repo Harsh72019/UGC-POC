@@ -19,7 +19,7 @@ router.patch(
 );
 
 // Later we can add a validation to get user only by their own id
-router.get('/', firebaseAuth('All'), userController.getUser);
+router.get('/getUserDetails', firebaseAuth('All'), userController.getUser);
 // for updating specific user preferences
 router.patch(
   '/updatePreferences',

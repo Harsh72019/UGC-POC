@@ -2,11 +2,11 @@ const Joi = require('joi');
 
 const register = {
   body: Joi.object().keys({
-    name: Joi.string().trim().required(),
-    gender: Joi.string().valid('male', 'female', 'other').required(),
-    phone: Joi.string().trim().optional().allow(null),
+    name: Joi.string().trim().optional(),
+    gender: Joi.string().valid('male', 'female', 'other').optional(),
+    phone: Joi.string().trim().optional(),
     dob: Joi.date().iso().optional().allow(null),
-    email: Joi.string().email().trim().required(),
+    email: Joi.string().email().trim().optional(),
     firebaseUid: Joi.string().optional().allow(null),
     firebaseSignInProvider: Joi.string().optional().allow(null),
     profilePic: Joi.object({
@@ -20,6 +20,7 @@ const register = {
     appNotificationsLastSeenAt: Joi.date().optional(),
   }),
 };
+
 
 
 module.exports = {

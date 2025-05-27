@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema(
     name: {
       type: String,
       trim: true,
-      required: true,
+      
     },
     phone: {
       type: String,
@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       trim: true,
-      required: true,
+      
     },
     profilePic: {
       type: {
@@ -35,12 +35,12 @@ const userSchema = new mongoose.Schema(
     },
     firebaseUid: {
       type: String,
-      required: true,
+      
       unique: true,
     },
     firebaseSignInProvider: {
       type: String,
-      required: true,
+      
     },
     appNotificationsLastSeenAt: {
       type: Date,

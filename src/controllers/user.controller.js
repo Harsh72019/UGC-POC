@@ -9,9 +9,10 @@ const updateUser = catchAsync(async (req, res) => {
 });
 
 const getUser = catchAsync(async (req, res) => {
-  const {userId} = req.params;
-  const user = await userService.getUserById(userId);
-  res.status(200).send({data: user});
+  const user = req.user;
+  const userId = user._id
+  const userData = await userService.getUserById(userId);
+  res.status(200).send({data: userData });
 });
 
 const updatePreferences = catchAsync(async (req, res) => {

@@ -12,7 +12,7 @@ const getUser = catchAsync(async (req, res) => {
   const user = req.user;
   const userId = user._id
   const userData = await userService.getUserById(userId);
-  res.status(200).send({status : true , data: userData });
+  res.status(200).send({status : true , data: userData , message : "User details fetched successfully"});
 });
 
 const updatePreferences = catchAsync(async (req, res) => {

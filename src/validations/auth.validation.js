@@ -13,7 +13,10 @@ const register = {
       key: Joi.string().required(),
       url: Joi.string().uri().required(),
     }).optional().allow(null),
-    socialAccounts: Joi.array().items(Joi.string()).optional(),
+     socialAccounts: Joi.object().pattern(
+      Joi.string().valid('instagram', 'facebook', 'twitter', 'linkedin', 'tiktok'),
+      Joi.string()
+    ).optional(),
     interests: Joi.array().items(Joi.string()).optional(),
     goals: Joi.string().optional().allow('', null),
     threadId: Joi.string().optional().allow(null),

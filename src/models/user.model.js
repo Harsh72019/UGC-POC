@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
 }
 ,
     interests: [String],
-    goals: String,
+    goals: [String],
     gender: String,
     email: {
       type: String,

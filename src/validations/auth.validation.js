@@ -18,7 +18,7 @@ const register = {
       Joi.string()
     ).optional(),
     interests: Joi.array().items(Joi.string()).optional(),
-    goals: Joi.string().optional().allow('', null),
+    goals: Joi.array().items(Joi.string()).optional(),
     threadId: Joi.string().optional().allow(null),
     appNotificationsLastSeenAt: Joi.date().optional(),
   }),

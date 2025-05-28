@@ -12,19 +12,12 @@ const userSchema = new mongoose.Schema(
       trim: true,
       default: null,
     },
-    socialAccounts: [
-      {
-        platform: {
-          type: String,
-          enum: ['instagram', 'facebook', 'twitter', 'linkedin', 'tiktok'], 
-          required: true,
-        },
-        id: {
-          type: String,
-          required: true,
-        },
-      },
-    ],
+   socialAccounts: {
+  type: Map,
+  of: String,
+  default: {},
+}
+,
     interests: [String],
     goals: String,
     gender: String,

@@ -6,21 +6,31 @@ const userSchema = new mongoose.Schema(
     name: {
       type: String,
       trim: true,
-      
     },
     phone: {
       type: String,
       trim: true,
       default: null,
     },
-    socialAccounts: [String],
+    socialAccounts: [
+      {
+        platform: {
+          type: String,
+          enum: ['instagram', 'facebook', 'twitter', 'linkedin', 'tiktok'], 
+          required: true,
+        },
+        id: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
     interests: [String],
     goals: String,
     gender: String,
     email: {
       type: String,
       trim: true,
-      
     },
     profilePic: {
       type: {
@@ -35,12 +45,11 @@ const userSchema = new mongoose.Schema(
     },
     firebaseUid: {
       type: String,
-      
+
       unique: true,
     },
     firebaseSignInProvider: {
       type: String,
-      
     },
     appNotificationsLastSeenAt: {
       type: Date,
@@ -52,15 +61,17 @@ const userSchema = new mongoose.Schema(
       default: null,
     },
 
-    aiCommentFeedback: [{
-      original: String,
-      edited: String,
-      timestamp: {
-        type: Date,
-        default: Date.now
-      }
-    }],
-    step : {
+    aiCommentFeedback: [
+      {
+        original: String,
+        edited: String,
+        timestamp: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+    step: {
       type: Number,
       default: 1,
     },
@@ -74,19 +85,17 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.pre('findOneAndUpdate', function (next) {
+userSchema.pre('findOneAndUpdate', function(next) {
   const update = this.getUpdate();
 
   if (update.step === 3 || (update.$set && update.$set.step === 3)) {
-    this.findOneAndUpdate({}, { $set: { isOnboardingCompleted: true } });
-  }
-  else{
-    this.findOneAndUpdate({}, { $set: { isOnboardingCompleted: false } });
+    this.findOneAndUpdate({}, {$set: {isOnboardingCompleted: true}});
+  } else {
+    this.findOneAndUpdate({}, {$set: {isOnboardingCompleted: false}});
   }
 
   next();
 });
-
 
 const clientSchema = new mongoose.Schema(
   {

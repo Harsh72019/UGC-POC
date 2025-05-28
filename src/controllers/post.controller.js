@@ -7,7 +7,7 @@ const createPost = catchAsync(async (req, res) => {
   const user = req.user;
   let posts = Array.isArray(req.body.posts) ? req.body.posts : [req.body.posts]; 
   const post = await postService.savePostsToBackend(posts,  user._id);
-  res.status(200).send({data: post, message: 'Posts created successfully'});
+  res.status(200).send({status : true , data: post, message: 'Posts created successfully'});
 });
 
 const getPost = catchAsync(async (req , res ) => {
@@ -23,18 +23,18 @@ const getPost = catchAsync(async (req , res ) => {
         sortOrder: req.query.sortOrder || 'desc',
     }
     const post = await postService.getPosts(updatedFilter , options);
-    res.status(200).send({data: post, message: 'Post successfully added'});
+    res.status(200).send({status : true ,  data: post, message: 'Post successfully added'});
 })
 
 const getPostWithId = catchAsync(async (req , res ) => {
     const postId = req.params.postId;
     const post = await postService.getPostById(postId);
-    res.status(200).send({data: post, message: 'Post fetched successfully'});
+    res.status(200).send({status : true ,  data: post, message: 'Post fetched successfully'});
 })
 
 const deletePost = catchAsync(async (req, res) => {
   await postService.deletePostById(req.params.postId);
-  res.status(200).send({message: 'The post deletion process has been completed successfully.'});
+  res.status(200).send({status : true ,  message: 'The post deletion process has been completed successfully.'});
 });
 
 module.exports = {

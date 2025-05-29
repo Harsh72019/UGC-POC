@@ -15,6 +15,13 @@ const postSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    avatar : {
+      type: {
+        key: String,
+        url: String,
+      },
+      default: null,
+    },
     platform: {
       type: String,
       enum: ['instagram', 'facebook', 'twitter', 'linkedin'],
@@ -28,13 +35,13 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    image: {
+    image: [{
       type: {
         key: String,
         url: String,
       },
       default: null,
-    },
+    }],
     hashtags: {
       type: [String],
       default: [],

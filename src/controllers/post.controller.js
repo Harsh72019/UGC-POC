@@ -11,20 +11,24 @@ const createPost = catchAsync(async (req, res) => {
 });
 
 const getPost = catchAsync(async (req , res ) => {
-    let user = req.user;
+    const user = req.user;
     const updatedFilter = {
-        ...req.query , 
+        ...req.query, 
         userId: user._id,
-    }
+    };
+
     const options = {
         page: req.query.page || 1,
         limit: req.query.limit || 10,
         sortBy: req.query.sortBy || 'createdAt',
         sortOrder: req.query.sortOrder || 'desc',
-    }
-    const post = await postService.getPosts(updatedFilter , options);
-    res.status(200).send({status : true ,  data: post, message: 'Post successfully added'});
-})
+        populate: 'userId::name,phone,socialAccounts,interests,goals,gender,email,profilePic,dob',
+    };
+
+    const post = await postService.getPosts(updatedFilter, options);
+    res.status(200).send({ status: true, data: post, message: 'Posts fetched successfully' });
+});
+
 
 const getPostWithId = catchAsync(async (req , res ) => {
     const postId = req.params.postId;

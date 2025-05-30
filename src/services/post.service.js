@@ -1,7 +1,7 @@
 const { Post } = require('../models');
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
-
+const {generateCommentFromImage} = require('./commentGeneration.service');
 const postValidator = post => {
   if (!post) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Post not found.');
@@ -75,7 +75,24 @@ async function savePostsToBackend(posts, userId) {
   }
 }
 
+async function generateComment(postId)
+{
+    const post = await Post.findById(postId);
+    if (!post) return res.status(404).json({ error: "Post not found" });
 
+    const imageUrl = post.image?.[0]?.url;
+    if (!imageUrl) return res.status(400).json({ error: "No image found in post" });
+
+    const commentText = await generateCommentFromImage(imageUrl, post.content);
+
+    const newComment = { text: commentText };
+    post.aiComments.push(newComment);
+    post.commentGenerated = true;
+    await post.save();
+    return commentText;
+}
+
+// console.log(await generateComment('68384d77234e54549f2db064'))
 async function deletePostById(id) {
   try {
     await Post.findByIdAndDelete(id);
@@ -91,4 +108,5 @@ module.exports = {
   getPostById,
   deletePostById,
  savePostsToBackend,
+ generateComment
 };

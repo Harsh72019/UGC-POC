@@ -22,6 +22,7 @@ const envVarsSchema = Joi.object()
     AWS_S3_BUCKET: Joi.string().required(),
     FIREBASE_API_KEY : Joi.string().required(),
     FIREBASE_SERVICE_SECRET_JSON: Joi.string().required(),
+    GOOGLE_API_KEY : Joi.string().required(),
   })
   .unknown();
 
@@ -38,6 +39,9 @@ module.exports = {
   port: envVars.PORT,
   paystack : {
     secretKey : envVars.PAYSTACK_SECRET_KEY,
+  },
+  google : {
+    apiKey : envVars.GOOGLE_API_KEY
   },
   // twilio: {
   //   sid: envVars.TWILIO_SID,

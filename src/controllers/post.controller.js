@@ -9,6 +9,7 @@ const generateComment = catchAsync(async (req , res) => {
   res.status(200).send({status : true , data: comment, message: 'Comment created successfully'});
 })
 
+
 const createPost = catchAsync(async (req, res) => {
   const user = req.user;
   let posts = Array.isArray(req.body.posts) ? req.body.posts : [req.body.posts]; 

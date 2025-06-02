@@ -27,7 +27,7 @@ router.get(
 // for getting a post by id
 router.get('/:postId', firebaseAuth('All'), postController.getPostWithId);
 
-router.get('/generate-comment/:postId', postController.generateComment);
+router.get('/generate-comment/:postId',firebaseAuth('All'), postController.generateComment);
 // for deleting a post
 router.delete(
   '/:postId',

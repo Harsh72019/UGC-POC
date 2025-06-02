@@ -1,13 +1,24 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
+const {Post} = require('../models/post.model');
 const {postService} = require('../services');
 
-const generateComment = catchAsync(async (req , res) => {
-  const postId = req.params.postId
-  const comment = await postService.generateComment(postId);
-  res.status(200).send({status : true , data: comment, message: 'Comment created successfully'});
-})
+
+const generateComment = catchAsync(async (req, res) => {
+  const userId = req.user._id;
+  const postId = req.params.postId;
+
+  const result = await postService.generateComment(postId, userId);
+
+  res.status(200).send({
+    status: true,
+    data: result.comment,
+    message: 'Comment generated',
+    limitReached: result.limitReached,
+    nearLimit: result.nearLimit,
+  });
+});
 
 
 const createPost = catchAsync(async (req, res) => {

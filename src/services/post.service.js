@@ -2,6 +2,7 @@ const { Post } = require('../models');
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const {generateCommentFromImage} = require('./commentGeneration.service');
+const {PlatformCommentUsage} = require('../models/platformCommentUsage.model');
 const postValidator = post => {
   if (!post) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Post not found.');
@@ -75,21 +76,50 @@ async function savePostsToBackend(posts, userId) {
   }
 }
 
-async function generateComment(postId)
-{
-    const post = await Post.findById(postId);
-    if (!post) return res.status(404).json({ error: "Post not found" });
 
-    const imageUrl = post.image?.[0]?.url;
-    if (!imageUrl) return res.status(400).json({ error: "No image found in post" });
+const COMMENT_LIMIT = 10;
+const WINDOW_DURATION_MINUTES = 60;
+const NEAR_LIMIT_THRESHOLD = 0.8;
 
-    const commentText = await generateCommentFromImage(imageUrl, post.content);
+async function generateComment(postId, userId) {
+  const post = await Post.findById(postId);
+  if (!post) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Post not found.');
+  }
 
-    const newComment = { text: commentText };
-    post.aiComments.push(newComment);
-    post.commentGenerated = true;
-    await post.save();
-    return commentText;
+  const platform = post.platform;
+
+  const windowStart = new Date(
+    Math.floor(Date.now() / (WINDOW_DURATION_MINUTES * 60 * 1000)) * (WINDOW_DURATION_MINUTES * 60 * 1000)
+  );
+
+  const usage = await PlatformCommentUsage.findOneAndUpdate(
+    { userId, platform, windowStart },
+    { $inc: { count: 1 } },
+    { new: true, upsert: true }
+  );
+
+  const limitExceeded = usage.count > COMMENT_LIMIT;
+  const nearLimit = usage.count >= COMMENT_LIMIT * NEAR_LIMIT_THRESHOLD && !limitExceeded;
+  const limitReached = limitExceeded;
+
+  if (!post.image?.[0]?.url) {
+    throw  new ApiError(httpStatus.NOT_FOUND, 'Image not found.');
+  }
+
+  const commentText = await generateCommentFromImage(post.image[0].url, post.content);
+
+  const newComment = { text: commentText };
+  post.aiComments.push(newComment);
+  post.commentGenerated = true;
+  await post.save();
+
+  return {
+    comment: commentText,
+    limitReached,
+    nearLimit,
+    limitExceeded,
+  };
 }
 
 // console.log(await generateComment('68384d77234e54549f2db064'))

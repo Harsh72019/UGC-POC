@@ -22,7 +22,9 @@ const generateComment = catchAsync(async (req, res) => {
 
 
 const createPost = catchAsync(async (req, res) => {
-  const user = req.user;
+  const user = {
+    _id: '6836fffb78a81fb380f93a42'
+  };
   let posts = Array.isArray(req.body.posts) ? req.body.posts : [req.body.posts]; 
   const post = await postService.savePostsToBackend(posts,  user._id);
   res.status(200).send({status : true , data: post, message: 'Posts created successfully'});

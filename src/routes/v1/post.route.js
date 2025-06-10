@@ -11,7 +11,7 @@ const router = express.Router();
 // for updating postDetails
 router.post(
   '/',
-  firebaseAuth('All'),
+  // firebaseAuth('All'),
   //   validate(postValidation.updateDetails),
   postController.createPost
 );

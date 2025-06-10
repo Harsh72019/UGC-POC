@@ -103,11 +103,11 @@ async function generateComment(postId, userId) {
   const nearLimit = usage.count >= COMMENT_LIMIT * NEAR_LIMIT_THRESHOLD && !limitExceeded;
   const limitReached = limitExceeded;
 
-  if (!post.image?.[0]?.url) {
+  if (!post.image?.[0]) {
     throw  new ApiError(httpStatus.NOT_FOUND, 'Image not found.');
   }
 
-  const commentText = await generateCommentFromImage(post.image[0].url, post.content);
+  const commentText = await generateCommentFromImage(post.image[0], post.content);
 
   const newComment = { text: commentText };
   post.aiComments.push(newComment);

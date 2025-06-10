@@ -35,13 +35,7 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    image: [{
-      type: {
-        key: String,
-        url: String,
-      },
-      default: null,
-    }],
+    image: [String],
     hashtags: {
       type: [String],
       default: [],

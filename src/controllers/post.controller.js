@@ -27,7 +27,7 @@ const createPost = catchAsync(async (req, res) => {
   };
   let posts = Array.isArray(req.body.posts) ? req.body.posts : [req.body.posts]; 
   const post = await postService.savePostsToBackend(posts,  user._id);
-  res.status(200).send({status : true , data: post, message: 'Posts created successfully'});
+  res.status(200).send({status : true , data: post, message: 'Posts saved successfully'});
 });
 
 const getPost = catchAsync(async (req , res ) => {

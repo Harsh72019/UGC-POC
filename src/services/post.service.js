@@ -26,9 +26,14 @@ async function getPosts(filters, options) {
  */
 async function savePostsToBackend(posts, userId) {
   if (!Array.isArray(posts) || !userId) return;
-
+  console.log( "posts ------------>" , posts)
   const operations = posts
-    .map((post) => {
+    .map((post, index) => {
+      if (!post || typeof post !== 'object') {
+        console.warn(`[Post Sync] Skipping invalid post at index ${index}:`, post);
+        return null;
+      }
+
       const {
         platform,
         postId,
@@ -40,7 +45,10 @@ async function savePostsToBackend(posts, userId) {
         timestamp = new Date(),
       } = post;
 
-      if (!platform || !postId || !content) return null;
+      if (!platform || !postId || !content) {
+        console.warn(`[Post Sync] Missing fields in post at index ${index}:`, post);
+        return null;
+      }
 
       return {
         updateOne: {
@@ -65,16 +73,21 @@ async function savePostsToBackend(posts, userId) {
     })
     .filter(Boolean);
 
-  if (operations.length === 0) return;
-
+  if (operations.length === 0) {
+    console.warn('[Post Sync] No valid operations to perform.');
+    return;
+  }
+  console.log( "operations ------------>" ,  operations  )
   try {
     const result = await Post.bulkWrite(operations, { ordered: false });
     console.log(`[Post Sync] Inserted: ${result.upsertedCount}, Updated: ${result.modifiedCount}`);
     return result;
   } catch (err) {
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR ,  `Failed to save posts`);
+    console.error('[Post Sync] Bulk write error:', err);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Failed to save posts');
   }
 }
+
 
 
 const COMMENT_LIMIT = 10;

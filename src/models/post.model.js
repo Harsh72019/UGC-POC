@@ -44,6 +44,10 @@ const postSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    metadata: {
+      type: Object,
+      default: null,
+    },
     interactions: {
       likes: {
         type: Number,

@@ -11,15 +11,23 @@ const genAI = new GoogleGenerativeAI(config.google.apiKey);
  * @returns {Promise<{ base64: string, mimeType: string }>}
  */
 async function fetchImageAsBase64AndMime(url) {
-  const response = await axios.get(url, { responseType: "arraybuffer" });
-  const contentType = response.headers["content-type"];
-
-  // Fallback: Guess MIME type from URL if header missing
-  const mimeType =
-    contentType || mime.lookup(url) || "image/jpeg";
-
-  const base64 = Buffer.from(response.data).toString("base64");
-  return { base64, mimeType };
+  try {
+      const response = await axios.get(url, {
+        responseType: "arraybuffer",
+        headers: {
+            "Referer": "https://www.instagram.com/",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" 
+        },
+        timeout: 40000 
+    });
+    const contentType = response.headers["content-type"];
+    const mimeType = contentType || mime.lookup(url) || "image/jpeg";
+    const base64 = Buffer.from(response.data).toString("base64");
+    return { base64, mimeType };
+  } catch (error) {
+    throw new ApiError(404, error.message);
+  }
+  
 }
 
 /**
@@ -40,7 +48,7 @@ async function generateAIComment(base64Image, mimeType, caption) {
   };
 
   const prompt = `
-You are SocialMediaCommentBot – a friendly, enthusiastic commenter who writes in a casual social-media style.
+You are SocialMediaCommentBot - a friendly, enthusiastic commenter who writes in a casual social-media style.
 Your comments should:
 - Be 1–2 short sentences
 - Mention something specific you “see” or “feel” from the image or caption
@@ -50,9 +58,10 @@ Your comments should:
 Use up to 15 words and feel free to add emojis like someone commenting on a post.
 Caption for this image: ${caption}
 `;
-
+  console.log("Here 1")
   const result = await model.generateContent([prompt, imagePart]);
-  const response = await result.response;
+  console.log("Here 2")
+  const response =  result.response;
   return response.text().trim();
 }
 
@@ -64,7 +73,9 @@ Caption for this image: ${caption}
  */
 async function generateCommentFromImage(imageUrl, caption) {
   try {
+    console.log("initial ----------->" , imageUrl, caption);
     const { base64, mimeType } = await fetchImageAsBase64AndMime(imageUrl);
+    console.log("final ----------->" , mimeType);
     return await generateAIComment(base64, mimeType, caption);
     
   } catch (error) {
@@ -74,4 +85,5 @@ async function generateCommentFromImage(imageUrl, caption) {
 
 module.exports = {
   generateCommentFromImage,
+  fetchImageAsBase64AndMime
 };

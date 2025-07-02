@@ -23,7 +23,7 @@ const connect = async () => {
 (async () => {
   await connect();
   server = app.listen(config.port, () => {
-    console.log(`BNeighbourly app listening on port ${config.port}!`);
+    console.log(`UGC app listening on port ${config.port}!`);
   });
 })();
 

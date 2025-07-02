@@ -15,7 +15,7 @@ const postSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
-    avatar : {
+    avatar: {
       type: {
         key: String,
         url: String,

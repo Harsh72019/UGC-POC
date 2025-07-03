@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema(
       },
       default: null,
     },
+    currentPage : {
+      type : Number,
+      default : 1 
+    },
     dob: {
       type: Date,
       default: null,

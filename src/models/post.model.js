@@ -40,6 +40,10 @@ const postSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    seen : {
+      type : Boolean,
+      default : false
+    },
     mentions: {
       type: [String],
       default: [],

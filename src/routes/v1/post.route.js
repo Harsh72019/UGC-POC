@@ -8,32 +8,18 @@ const {postController} = require('../../controllers');
 
 const router = express.Router();
 
-// for updating postDetails
-router.post(
-  '/',
-  // firebaseAuth('All'),
-  //   validate(postValidation.updateDetails),
-  postController.createPost
-);
+router.post('/', postController.createPost);
 
-// for updating specific post preferences
-router.get(
-  '/',
-  //   validate(postValidation.updateUserPreferences),
-  firebaseAuth('All'),
-  postController.getPost
-);
+router.get('/', firebaseAuth('All'), postController.getPost);
 
-// for getting a post by id
+router.get("/seen/:postId", firebaseAuth('All'), postController.markAsSeen);
+
+router.get('/current-page', firebaseAuth('All'), postController.getCurrentUserPage);
+
+router.get('/generate-comment/:postId', firebaseAuth('All'), postController.generateComment);
+
+router.delete('/:postId', firebaseAuth('Admin'), postController.deletePost);
+
 router.get('/:postId', firebaseAuth('All'), postController.getPostWithId);
-
-router.get('/generate-comment/:postId',firebaseAuth('All'), postController.generateComment);
-// for deleting a post
-router.delete(
-  '/:postId',
-  // validate(postValidation.deleteUser),
-  firebaseAuth('Admin'),
-  postController.deletePost
-);
 
 module.exports = router;

@@ -2,8 +2,9 @@ const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const {Post} = require('../models/post.model');
+const {User} = require('../models/user.model');
 const {postService} = require('../services');
-
+const {getPaginateConfig} = require('../utils/queryPHandler');
 
 const generateComment = catchAsync(async (req, res) => {
   const userId = req.user._id;
@@ -20,45 +21,56 @@ const generateComment = catchAsync(async (req, res) => {
   });
 });
 
-
 const createPost = catchAsync(async (req, res) => {
   const user = {
-    _id: '6836fffb78a81fb380f93a42'
+    _id: '6836fffb78a81fb380f93a42',
   };
-  let posts = Array.isArray(req.body.posts) ? req.body.posts : [req.body.posts]; 
-  const post = await postService.savePostsToBackend(posts,  user._id);
-  res.status(200).send({status : true , data: post, message: 'Posts saved successfully'});
+  let posts = Array.isArray(req.body.posts) ? req.body.posts : [req.body.posts];
+  const post = await postService.savePostsToBackend(posts, user._id);
+  res.status(200).send({status: true, data: post, message: 'Posts saved successfully'});
 });
 
-const getPost = catchAsync(async (req , res ) => {
-    const user = req.user;
-    const updatedFilter = {
-        ...req.query, 
-        userId: user._id,
-    };
-
-    const options = {
-        page: req.query.page || 1,
-        limit: req.query.limit || 10,
-        sortBy: req.query.sortBy || 'createdAt',
-        sortOrder: req.query.sortOrder || 'desc',
-        populate: 'userId::name,phone,socialAccounts,interests,goals,gender,email,profilePic,dob',
-    };
-
-    const post = await postService.getPosts(updatedFilter, options);
-    res.status(200).send({ status: true, data: post, message: 'Posts fetched successfully' });
+const markAsSeen = catchAsync(async (req, res) => {
+  const {postId} = req.params;
+  if(!postId) throw new ApiError(httpStatus.BAD_REQUEST, 'Post id is required');
+  const post = await Post.updateOne({_id: postId}, {$set: {seen: true}});
+  res.status(200).send({status: true, data: post, message: 'Post marked as seen'});
 });
 
+const getPost = catchAsync(async (req, res) => {
+  const user = req.user;
+  const {filter , options } = getPaginateConfig(req.query);
+  const updatedFilter = {
+    filter,
+    userId: user._id,
+  }; 
+  if (req.query.page > user.currentPage){ 
+    console.log(req.query.page, user.currentPage);
+    await User.updateOne({_id: user._id}, {$set: {currentPage: req.query.page}});
+  }
+  // Save the current page at the users end
 
-const getPostWithId = catchAsync(async (req , res ) => {
-    const postId = req.params.postId;
-    const post = await postService.getPostById(postId);
-    res.status(200).send({status : true ,  data: post, message: 'Post fetched successfully'});
-})
+  options.populate = 'userId::name,phone,socialAccounts,interests,goals,gender,email,profilePic,dob';
+
+  const post = await postService.getPosts(updatedFilter, options);
+  res.status(200).send({status: true, data: post, message: 'Posts fetched successfully'});
+});
+
+const getCurrentUserPage = catchAsync(async (req, res) => {
+  const user = req.user;
+  const page = await User.findOne({_id: user._id}).select('currentPage');
+  res.status(200).send({status: true, data: page, message: 'Current page fetched successfully'});
+});
+
+const getPostWithId = catchAsync(async (req, res) => {
+  const postId = req.params.postId;
+  const post = await postService.getPostById(postId);
+  res.status(200).send({status: true, data: post, message: 'Post fetched successfully'});
+});
 
 const deletePost = catchAsync(async (req, res) => {
   await postService.deletePostById(req.params.postId);
-  res.status(200).send({status : true ,  message: 'The post deletion process has been completed successfully.'});
+  res.status(200).send({status: true, message: 'The post deletion process has been completed successfully.'});
 });
 
 // // 🔢 Mock media arrays
@@ -127,8 +139,10 @@ const deletePost = catchAsync(async (req, res) => {
 
 module.exports = {
   deletePost,
+  markAsSeen,
   getPost,
   getPostWithId,
   createPost,
-  generateComment
+  getCurrentUserPage,
+  generateComment,
 };

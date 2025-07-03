@@ -129,7 +129,7 @@ async function savePostsToBackend(posts, userId) {
 }
 
 const COMMENT_LIMIT = 10;
-const WINDOW_DURATION_MINUTES = 60;
+const WINDOW_DURATION_MINUTES = 240;
 const NEAR_LIMIT_THRESHOLD = 0.8;
 
 async function generateComment(postId, userId) {

@@ -28,11 +28,11 @@ async function getPosts(filters, options) {
  */
 async function savePostsToBackend(posts, userId) {
   if (!Array.isArray(posts) || !userId) return;
-
+  console.log(posts)
   const operations = posts
     .map((post, index) => {
       if (!post || typeof post !== 'object') return null;
-
+      console.log(post)
       const {
         platform,
         postId,
@@ -70,7 +70,7 @@ async function savePostsToBackend(posts, userId) {
       };
     })
     .filter(Boolean);
-
+    console.log(operations , "operations");
   if (operations.length === 0) return;
 
   try {
@@ -110,13 +110,21 @@ async function savePostsToBackend(posts, userId) {
             ...(base64Images.length > 0 && {image: base64Images}),
             ...(updatedProfileImage && {'metadata.user.profileImage': updatedProfileImage}),
           };
-
+          console.log("updateFields -------->" , updateFields)
           if (Object.keys(updateFields).length > 0) {
             await Post.updateOne(filter, {$set: updateFields});
             console.log(`[Image Processor] Post ${filter.postId} updated with images.`);
           }
         } catch (err) {
           console.error(`[Image Processor] Failed to process post ${filter.postId}:`, err.message);
+          if (err.message && err.message.includes('403')) {
+            try {
+              await Post.deleteOne(filter);
+              console.log(`[Image Processor] Post ${filter.postId} deleted due to 403 error.`);
+            } catch (deleteErr) {
+              console.error(`[Image Processor] Failed to delete post ${filter.postId}:`, deleteErr.message);
+            }
+          }
         }
       }
     });
@@ -127,6 +135,7 @@ async function savePostsToBackend(posts, userId) {
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Failed to save posts');
   }
 }
+
 
 const COMMENT_LIMIT = 10;
 const WINDOW_DURATION_MINUTES = 240;

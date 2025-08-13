@@ -20,11 +20,13 @@ async function fetchImageAsBase64AndMime(url) {
         },
         timeout: 40000 
     });
+    console.log( "response" , response.data);
     const contentType = response.headers["content-type"];
     const mimeType = contentType || mime.lookup(url) || "image/jpeg";
     const base64 = Buffer.from(response.data).toString("base64");
     return { base64, mimeType };
   } catch (error) {
+    console.log("error" , error)
     throw new ApiError(404, error.message);
   }
   

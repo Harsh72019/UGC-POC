@@ -12,6 +12,19 @@ router.post('/', postController.createPost);
 
 router.get('/', firebaseAuth('All'), postController.getPost);
 
+router.get('/proxy-video', async (req, res) => {
+  const videoUrl = req.query.url;
+  const response = await axios({
+    url: videoUrl,
+    method: 'GET',
+    responseType: 'stream',
+    headers: {
+      'User-Agent': 'Mozilla/5.0',
+    },
+  });
+  response.data.pipe(res);
+});
+
 router.get("/seen/:postId", firebaseAuth('All'), postController.markAsSeen);
 
 router.get('/current-page', firebaseAuth('All'), postController.getCurrentUserPage);

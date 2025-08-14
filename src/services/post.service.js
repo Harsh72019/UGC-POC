@@ -82,7 +82,10 @@ async function savePostsToBackend(posts, userId) {
         const {filter, update} = op.updateOne;
         const imageUrls = update.$set.image;
         const metadata = update.$set.metadata;
-
+        if(imageUrls.length === 0 ){
+          await Post.deleteOne(filter);
+          continue;
+        } 
         try {
           const base64Images =
             Array.isArray(imageUrls) && imageUrls.length > 0

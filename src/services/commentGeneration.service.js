@@ -26,7 +26,7 @@ async function fetchImageAsBase64AndMime(url) {
     const base64 = Buffer.from(response.data).toString("base64");
     return { base64, mimeType };
   } catch (error) {
-    // console.log("error" , error)
+    console.log(`error in url : ${url}` , error)
     throw new ApiError(404, error.message);
   }
   

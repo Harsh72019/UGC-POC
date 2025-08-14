@@ -98,7 +98,11 @@ async function savePostsToBackend(posts, userId) {
               : [];
 
           let updatedProfileImage = null;
+          console.log("metaData" , metadata)
+          
           const profileImageUrl = metadata?.user?.profileImage;
+          console.log("user" , metadata?.user)
+          console.log("profileImageUrl" , profileImageUrl)
 
           if (profileImageUrl) {
             try {

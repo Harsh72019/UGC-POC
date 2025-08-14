@@ -20,7 +20,7 @@ async function fetchImageAsBase64AndMime(url) {
         },
         timeout: 40000 
     });
-    console.log( "response" , response.data);
+    // console.log( "response" , response.data);
     const contentType = response.headers["content-type"];
     const mimeType = contentType || mime.lookup(url) || "image/jpeg";
     const base64 = Buffer.from(response.data).toString("base64");
@@ -60,9 +60,9 @@ Your comments should:
 Use up to 15 words and feel free to add emojis like someone commenting on a post.
 Caption for this image: ${caption}
 `;
-  console.log("Here 1")
+  // console.log("Here 1")
   const result = await model.generateContent([prompt, imagePart]);
-  console.log("Here 2")
+  // console.log("Here 2")
   const response =  result.response;
   return response.text().trim();
 }
@@ -75,9 +75,9 @@ Caption for this image: ${caption}
  */
 async function generateCommentFromImage(imageUrl, caption) {
   try {
-    console.log("initial ----------->" , imageUrl, caption);
+    // console.log("initial ----------->" , imageUrl, caption);
     const { base64, mimeType } = await fetchImageAsBase64AndMime(imageUrl);
-    console.log("final ----------->" , mimeType);
+    // console.log("final ----------->" , mimeType);
     return await generateAIComment(base64, mimeType, caption);
     
   } catch (error) {

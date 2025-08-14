@@ -28,11 +28,11 @@ async function getPosts(filters, options) {
  */
 async function savePostsToBackend(posts, userId) {
   if (!Array.isArray(posts) || !userId) return;
-  console.log(posts)
+  // console.log(posts)
   const operations = posts
     .map((post, index) => {
       if (!post || typeof post !== 'object') return null;
-      console.log(post)
+      // console.log(post)
       const {
         platform,
         postId,
@@ -70,7 +70,7 @@ async function savePostsToBackend(posts, userId) {
       };
     })
     .filter(Boolean);
-    console.log(operations , "operations");
+    // console.log(operations , "operations");
   if (operations.length === 0) return;
 
   try {
@@ -117,7 +117,7 @@ async function savePostsToBackend(posts, userId) {
             ...(base64Images.length > 0 && {image: base64Images}),
             ...(updatedProfileImage && {'metadata.user.profileImage': updatedProfileImage}),
           };
-          console.log("updateFields -------->" , updateFields)
+          // console.log("updateFields -------->" , updateFields)
           if (Object.keys(updateFields).length > 0) {
             await Post.updateOne(filter, {$set: updateFields});
             console.log(`[Image Processor] Post ${filter.postId} updated with images.`);
